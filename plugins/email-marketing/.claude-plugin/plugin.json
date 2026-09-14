@@ -1,0 +1,23 @@
+{
+  "name": "email-marketing",
+  "displayName": "Email Marketing",
+  "version": "1.0.0",
+  "description": "Create world class emails using Knak's CHEETAH framework to score your existing briefs or to create new ones from your rough ideas, transcripts, or voice notes",
+  "author": {
+    "name": "Knak",
+    "url": "https://knak.com"
+  },
+  "homepage": "https://github.com/KnakLabs/claude-plugins/tree/main/plugins/email-marketing",
+  "repository": "https://github.com/KnakLabs/claude-plugins",
+  "license": "MIT",
+  "keywords": [
+    "email",
+    "email-marketing",
+    "email-copy",
+    "email-brief",
+    "newsletter",
+    "copywriting",
+    "cheetah",
+    "knak"
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "name": "knak-plugins",
+  "owner": {
+    "name": "Knak",
+    "url": "https://knak.com"
+  },
+  "metadata": {
+    "description": "Claude plugins for email marketing and marketing operations, from Knak",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "email-marketing",
+      "source": "./plugins/email-marketing",
+      "description": "Create world class emails using Knak's CHEETAH framework to score your existing briefs or to create new ones from your rough ideas, transcripts, or voice notes",
+      "category": "productivity"
+    },
+    {
+      "name": "marketing-operations",
+      "source": "./plugins/marketing-operations",
+      "description": "Ship campaigns without the busywork: tag every link with your own UTM conventions, crop and compress images for email with alt text written for you, build branded QR codes, and clean lists before import.",
+      "category": "productivity"
+    }
+  ]
+}

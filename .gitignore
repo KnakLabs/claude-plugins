@@ -1,0 +1,6 @@
+.DS_Store
+__pycache__/
+*.pyc
+
+# Skill working folders — may contain real Clay function IDs and enrichment output
+list-upload-knowledge/

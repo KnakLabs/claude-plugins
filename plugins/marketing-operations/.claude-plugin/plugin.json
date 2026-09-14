@@ -1,0 +1,25 @@
+{
+  "name": "marketing-operations",
+  "displayName": "Marketing Operations",
+  "version": "1.0.8",
+  "description": "Ship campaigns without the busywork: tag every link with your own UTM conventions, crop and compress images for email with alt text written for you, build branded QR codes, and clean lists before import.",
+  "author": {
+    "name": "Knak",
+    "url": "https://knak.com"
+  },
+  "homepage": "https://github.com/KnakLabs/claude-plugins/tree/main/plugins/marketing-operations",
+  "repository": "https://github.com/KnakLabs/claude-plugins",
+  "license": "MIT",
+  "keywords": [
+    "marketing-ops",
+    "utm",
+    "ga4",
+    "qr-code",
+    "image-compression",
+    "image-cropping",
+    "alt-text",
+    "list-import",
+    "marketo",
+    "knak"
+  ]
+}

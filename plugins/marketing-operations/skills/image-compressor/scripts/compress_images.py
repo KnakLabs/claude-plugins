@@ -93,7 +93,7 @@ except Exception:
 try:
     from PIL import Image, ImageChops, ImageCms, ImageOps, ImageSequence, ImageStat
 except ImportError:
-    print("Pillow is required. Install it with: pip install Pillow --break-system-packages", file=sys.stderr)
+    print("Pillow is required. Install it with: pip install "Pillow==12.3.0" --break-system-packages", file=sys.stderr)
     sys.exit(1)
 
 SUPPORTED_EXTS = {".jpg", ".jpeg", ".png", ".gif", ".webp", ".bmp", ".tiff", ".tif"}

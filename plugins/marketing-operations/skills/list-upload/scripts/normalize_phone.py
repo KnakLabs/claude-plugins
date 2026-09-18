@@ -37,7 +37,7 @@ try:
     import phonenumbers
     from phonenumbers import NumberParseException
 except ImportError:
-    print("ERROR: phonenumbers library not installed. Run: pip install phonenumbers --break-system-packages", file=sys.stderr)
+    print("ERROR: phonenumbers library not installed. Run: pip install "phonenumbers==9.0.40" --break-system-packages", file=sys.stderr)
     sys.exit(1)
 
 

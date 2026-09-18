@@ -18,20 +18,24 @@ import sys
 # kind: "pip" or "binary"
 # level: "required" — a skill fails without it
 #        "better"   — a skill works, but produces a worse result
+# Versions are pinned exactly. The plugin directory requires it: an unpinned install
+# can change after review. To move one, bump it here and test before releasing —
+# this table is the single source of truth for the audit and for ensure_deps.py.
 REQUIREMENTS = [
-    # module/binary,     install name,      kind,     level,      used by,                              what it does
-    ("PIL",              "Pillow",          "pip",    "required", "image-compressor, image-cropper, qr-code-generator", "reads and writes images"),
-    ("qrcode",           "qrcode",          "pip",    "required", "qr-code-generator",                  "builds the QR matrix"),
-    ("phonenumbers",     "phonenumbers",    "pip",    "required", "list-upload",                        "parses phone numbers to E.164"),
-    ("pycountry",        "pycountry",       "pip",    "required", "list-upload",                        "maps country names to ISO codes"),
-    ("openpyxl",         "openpyxl",        "pip",    "required", "utm-generator",                      "writes the .xlsx link table"),
-    ("oxipng",           "pyoxipng",        "pip",    "better",   "image-compressor",                   "smaller PNGs than Pillow alone"),
-    ("cv2",              "opencv-python-headless", "pip", "required", "image-cropper",                  "finds faces so crops keep them"),
-    ("numpy",            "numpy",           "pip",    "better",   "image-cropper",                      "much faster crop scoring on batches"),
-    ("gifsicle",         "gifsicle-bin",    "binary", "better",   "image-compressor",                   "smaller flat-colour GIFs (~18% on a logo); nothing on photographic ones"),
+    # module/binary,  install name,                        kind,     level,      used by,                                              what it does
+    ("PIL",           "Pillow==12.3.0",                    "pip",    "required", "image-compressor, image-cropper, qr-code-generator", "reads and writes images"),
+    ("qrcode",        "qrcode==8.2",                       "pip",    "required", "qr-code-generator",                                  "builds the QR matrix"),
+    ("phonenumbers",  "phonenumbers==9.0.40",              "pip",    "required", "list-upload",                                        "parses phone numbers to E.164"),
+    ("pycountry",     "pycountry==26.2.16",                "pip",    "required", "list-upload",                                        "maps country names to ISO codes"),
+    ("openpyxl",      "openpyxl==3.1.5",                   "pip",    "required", "utm-generator",                                      "writes the .xlsx link table"),
+    ("oxipng",        "pyoxipng==9.1.1",                   "pip",    "better",   "image-compressor",                                   "smaller PNGs than Pillow alone"),
+    ("cv2",           "opencv-python-headless==4.14.0.94", "pip",    "required", "image-cropper",                                      "finds faces so crops keep them"),
+    ("numpy",         "numpy==2.5.3",                      "pip",    "better",   "image-cropper",                                      "much faster crop scoring on batches"),
+    ("gifsicle",      "gifsicle-bin==1.96.4",              "binary", "better",   "image-compressor",                                   "smaller flat-colour GIFs (~18% on a logo); nothing on photographic ones"),
 ]
 
-BREW_HINT = {"gifsicle": "brew install gifsicle"}
+
+BREW_HINT = {}  # gifsicle ships inside the pinned gifsicle-bin wheel
 
 
 def present(name, kind):

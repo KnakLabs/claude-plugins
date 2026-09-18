@@ -10,6 +10,10 @@
   "homepage": "https://github.com/KnakLabs/claude-plugins/tree/main/plugins/email-marketing",
   "repository": "https://github.com/KnakLabs/claude-plugins",
   "license": "MIT",
+  "icon": "./knak-logo.png",
+  "documentationUrl": "https://github.com/KnakLabs/claude-plugins/tree/main/plugins/email-marketing",
+  "supportUrl": "https://knak.com/contact/",
+  "privacyPolicyUrl": "https://knak.com/privacy-policy/",
   "keywords": [
     "email",
     "email-marketing",

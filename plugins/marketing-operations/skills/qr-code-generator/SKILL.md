@@ -96,6 +96,42 @@ container, so nothing installed last time survives. **Kick the install off in th
 background as your very first action**, then carry straight on with the questions
 below while it runs:
 
+**Find the Python interpreter first — one command, and it names what to use for every
+script in this skill:**
+
+```bash
+PY=""; for c in python3 python python3.13 python3.12 python3.11 python3.10; do
+  command -v "$c" >/dev/null 2>&1 && "$c" -c "import sys; sys.exit(0 if sys.version_info >= (3,10) else 1)" 2>/dev/null && { PY="$c"; break; }
+done
+[ -n "$PY" ] && echo "python ok: $PY" || echo "python missing or older than 3.10"
+```
+
+**Use whatever it names wherever this skill writes `python3`.** macOS and Linux generally
+answer `python3`; a Windows install from python.org answers `python`. The check also rejects a
+Python older than 3.10, because the pinned packages need it.
+
+**On `python missing`, tell the user what fits their machine** — `uname -s` says which
+(`Darwin`, `Linux`, or `MINGW`/`MSYS` under Git Bash on Windows):
+
+- **macOS** — install from [python.org](https://www.python.org/downloads/macos/), which gives
+  a current Python and puts it ahead of the system one:
+
+  > Your Mac needs a current Python. Download the macOS installer from python.org and run it —
+  > a few minutes, and it doesn't need your password.
+
+  `xcode-select --install` also produces a `python3`, but Apple's is 3.9.6, and three of this
+  plugin's packages need 3.10 or later. Send people to python.org instead.
+
+- **Windows** — install from [python.org](https://www.python.org/downloads/), ticking **Add
+  python.exe to PATH** on the first screen, or run `winget install Python.Python.3.12`.
+
+- **Linux** — `sudo apt install python3` on Debian and Ubuntu, `sudo dnf install python3` on
+  Fedora.
+
+Wait for them, re-run the check, and carry on once it names an interpreter.
+
+Everything in this skill that runs a script needs it, so this is worth the one command.
+
 ```bash
 python3 ${CLAUDE_PLUGIN_ROOT}/scripts/ensure_deps.py qr-code-generator &
 ```

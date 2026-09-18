@@ -41,3 +41,13 @@ MIT. See [LICENSE](LICENSE).
 
 The `image-cropper` skill bundles the MIT-licensed YuNet face detection model from
 OpenCV Zoo — see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+
+## Tested on macOS
+
+These skills were built and tested on macOS. The Python packages they rely on ship Windows
+and Linux builds, and the skills resolve `python3` or `python` to whichever the machine has,
+so they should work elsewhere — but nothing here has been run on Windows or Linux, and the
+shell commands throughout assume a POSIX shell (Git Bash or WSL on Windows).
+
+One known limit: **Clay's CLI has no Windows build**, so `list-upload` falls back to the Clay
+connector there, which is slower on long lists.

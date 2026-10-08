@@ -97,6 +97,35 @@ Run the bundled script on the whole batch at once (don't loop over files one at 
 time — the script already handles a directory or a file list, and runs the batch
 in parallel across CPU cores):
 
+**Find the Python interpreter first — one command, and it names what to use for every
+script in this skill:**
+
+```bash
+PY=""; for c in python3 python; do
+  command -v "$c" >/dev/null 2>&1 && "$c" -c "pass" 2>/dev/null && { PY="$c"; break; }
+done
+[ -n "$PY" ] && echo "python ok: $PY" || echo "python missing"
+```
+
+**Use whatever it names wherever this skill writes `python3`.** macOS and Linux generally
+answer `python3`; a Windows install from python.org answers `python`.
+
+**On `python missing`, tell the user what fits their machine** — `uname -s` says which
+(`Darwin`, `Linux`, or `MINGW`/`MSYS` under Git Bash on Windows):
+
+- **macOS** — Python ships with the OS but needs Apple's developer tools switched on once:
+
+  > Your Mac has Python but hasn't switched it on yet. Run `xcode-select --install` and click
+  > through the installer that appears. A few minutes, and it doesn't need your password.
+
+- **Windows** — install from [python.org](https://www.python.org/downloads/), ticking **Add
+  python.exe to PATH** on the first screen, or run `winget install Python.Python.3.12`.
+
+- **Linux** — `sudo apt install python3` on Debian and Ubuntu, `sudo dnf install python3` on
+  Fedora.
+
+Wait for them, re-run the check, and carry on once it names an interpreter.
+
 ```bash
 python3 ${CLAUDE_PLUGIN_ROOT}/skills/image-compressor/scripts/compress_images.py <input_dir_or_files...> -o <output_dir>
 ```

@@ -9,6 +9,38 @@ Most people can skip this entirely — every skill in this plugin installs whate
 needs on its own, the first time it runs. This command exists only to make that install
 *permanent* on your own computer, so it never has to happen again.
 
+## Step 0: Find the Python interpreter
+
+Every step below runs Python, so settle this first:
+
+```bash
+PY=""; for c in python3 python; do
+  command -v "$c" >/dev/null 2>&1 && "$c" -c "pass" 2>/dev/null && { PY="$c"; break; }
+done
+[ -n "$PY" ] && echo "python ok: $PY" || echo "python missing"
+```
+
+**Use whatever it names wherever this command writes `python3`.** macOS and Linux generally
+answer `python3`; a Windows install from python.org answers `python`.
+
+**On `python missing`, match the advice to the machine** — `uname -s` says which (`Darwin`,
+`Linux`, or `MINGW`/`MSYS` under Git Bash on Windows):
+
+- **macOS** — Python ships with the OS but needs Apple's developer tools switched on once.
+  This is the common case on a Mac that has never been used for development:
+
+  > Your Mac has Python but hasn't switched it on yet. Run `xcode-select --install` and click
+  > through the installer that appears. A few minutes, and it doesn't need your password.
+
+- **Windows** — install from [python.org](https://www.python.org/downloads/), ticking **Add
+  python.exe to PATH** on the first screen, or run `winget install Python.Python.3.12`.
+
+- **Linux** — `sudo apt install python3` on Debian and Ubuntu, `sudo dnf install python3` on
+  Fedora.
+
+Wait for them, re-run the check, and carry on once it names an interpreter. Everything from
+here needs it, this command included.
+
 ## Step 1: Figure out where this is running
 
 ```bash
@@ -70,32 +102,34 @@ says so when it runs.
 
 ### Install
 
-The CLI ships in Clay's own repository as a launcher that downloads a checksum-verified
-binary for this machine on first use. (The `clay` and `clay-cli` packages on npm are
-unrelated projects by other authors.)
+**Clay's CLI is macOS and Linux only** — the npm package declares `darwin` and `linux`, with
+nothing for Windows. On Windows, say so and stop here; `list-upload` uses the Clay connector
+instead, at the cost the table in that skill sets out.
+
+It installs from npm at an exact version, and needs Node 22 or later:
 
 ```bash
-mkdir -p ~/.clay && rm -rf ~/.clay/agent-plugins
-git clone -q --depth 1 https://github.com/clay-run/agent-plugins.git ~/.clay/agent-plugins
-~/.clay/agent-plugins/clay/bin/clay --version
+npm install -g @clay-run/cli@1.9.1
+clay --version
 ```
 
-`~/.clay/agent-plugins/clay/bin/clay` is where `list-upload` looks, so this path is the one
-to use.
+The version is pinned deliberately; bump it here when you want a newer one. `clay` lands on
+PATH, which is where `list-upload` looks for it.
 
 ### Sign in
 
-Check first — a machine that has been set up before is already signed in:
+Check first — a machine that has been set up before is already signed in, and a session
+survives a CLI upgrade:
 
 ```bash
-~/.clay/agent-plugins/clay/bin/clay whoami
+clay whoami
 ```
 
 That returns the workspace and user when a session exists. Otherwise start the device flow.
 It waits for approval, so run it in the background and read the file:
 
 ```bash
-~/.clay/agent-plugins/clay/bin/clay login --device > /tmp/clay_login.log 2>&1 &
+clay login --device > /tmp/clay_login.log 2>&1 &
 sleep 5; cat /tmp/clay_login.log
 ```
 
@@ -126,12 +160,12 @@ Where they say no, stop — `list-upload` still queries Salesforce through the c
 ### Install and sign in
 
 ```bash
-npm install -g @salesforce/cli
+npm install -g @salesforce/cli@2.153.5
 sf --version
 ```
 
-Homebrew works too (`brew install --cask salesforce-cli`) where npm's global directory needs
-a password.
+The version is pinned deliberately; bump it here when you want a newer one. Node 22 or later
+is required.
 
 Check for an existing org first — a machine set up before is already signed in:
 

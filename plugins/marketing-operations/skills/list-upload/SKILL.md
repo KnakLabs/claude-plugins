@@ -147,6 +147,37 @@ container, so nothing installed last time survives. **Kick the install off in th
 background as your very first action**, then carry straight on with the questions
 below while it runs:
 
+**Find the Python interpreter first — one command, and it names what to use for every
+script in this skill:**
+
+```bash
+PY=""; for c in python3 python; do
+  command -v "$c" >/dev/null 2>&1 && "$c" -c "pass" 2>/dev/null && { PY="$c"; break; }
+done
+[ -n "$PY" ] && echo "python ok: $PY" || echo "python missing"
+```
+
+**Use whatever it names wherever this skill writes `python3`.** macOS and Linux generally
+answer `python3`; a Windows install from python.org answers `python`.
+
+**On `python missing`, tell the user what fits their machine** — `uname -s` says which
+(`Darwin`, `Linux`, or `MINGW`/`MSYS` under Git Bash on Windows):
+
+- **macOS** — Python ships with the OS but needs Apple's developer tools switched on once:
+
+  > Your Mac has Python but hasn't switched it on yet. Run `xcode-select --install` and click
+  > through the installer that appears. A few minutes, and it doesn't need your password.
+
+- **Windows** — install from [python.org](https://www.python.org/downloads/), ticking **Add
+  python.exe to PATH** on the first screen, or run `winget install Python.Python.3.12`.
+
+- **Linux** — `sudo apt install python3` on Debian and Ubuntu, `sudo dnf install python3` on
+  Fedora.
+
+Wait for them, re-run the check, and carry on once it names an interpreter.
+
+Everything in this skill that runs a script needs it, so this is worth the one command.
+
 ```bash
 python3 ${CLAUDE_PLUGIN_ROOT}/scripts/ensure_deps.py list-upload &
 ```
@@ -167,8 +198,11 @@ Run the steps below at the point each function is first needed — **email valid
 the column mapping and a sorted list. Once `clay-functions.md` records a function, every
 later run reads it and asks nothing.
 
-1. **Find the function with `list_subroutines`.** It returns each function's id, name,
-   description and required inputs, which makes the id a lookup you can do yourself. Match on what the description says the function does: an email
+1. **Find the function by listing what the workspace has.** With the CLI installed,
+   `clay routines list` returns each routine's id, name and description — and it gives the id
+   in the full `function:t_...` form the next step needs. Through the connector,
+   `list_subroutines` returns the same thing plus the required inputs, with the id stripped of
+   its prefix. Either way the id is a lookup you can do yourself. Match on what the description says the function does: an email
    validator validates an address and falls back to a waterfall when it fails; a person
    enricher returns a LinkedIn profile, firmographics and job title. Show the user the one
    you picked — its name, what it does, and the inputs it takes — and get a yes before
@@ -364,10 +398,13 @@ connector in this session.
 >
 > Do you have a Clay account?
 >
-> - **Yes — set up the command-line tool** *(recommended)* — about a minute, and it handles any
->   list size in one go
+> - **Yes — set up the command-line tool** *(recommended on macOS and Linux)* — about a minute,
+>   and it handles any list size in one go
 > - **Yes — I'll connect Clay's connector instead** — nothing to install, slower on long lists
 > - **No — skip validation and enrichment** — I clean, dedupe and normalize without them
+
+**On Windows, recommend the connector instead** — the CLI has no Windows build, so offer it
+as the first option there and leave the CLI out of the list.
 
 Their answer routes the rest of this step:
 
@@ -458,7 +495,26 @@ stay empty, no replacement addresses are found, and every address goes forward a
 
 ### Setting up the Clay CLI
 
-Do this before sending anything. Where the run is happening decides how much work it is:
+**Check the operating system first — Clay's CLI has no Windows build:**
+
+```bash
+uname -s
+```
+
+`Darwin` is macOS and `Linux` is Linux; either can run it. Anything else — `MINGW64_NT`,
+`MSYS_NT`, `CYGWIN` — is Windows under a POSIX shell, and Clay ships no binary for it. Say so
+and use the connector:
+
+> Clay's command-line tool is macOS and Linux only, so on Windows I'll send your list through
+> the Clay connector instead. It works exactly the same; it just takes longer on a long list,
+> because every record has to be written into the request. For **<N>** records that's about
+> **<T>** minutes.
+
+Fill `<N>` and `<T>` from the table above, then skip to
+[Running the function through the connector](#running-the-function-through-the-connector).
+Everything after Step 2 is unaffected — the results are identical whichever route carried them.
+
+Where the CLI can run, the next question is how much setup it takes:
 
 ```bash
 python3 -c "import os; print('cowork' if os.path.isdir('/mnt/user-data') or os.path.isdir('/mnt/outputs') else ('claude-code' if os.environ.get('CLAUDECODE') else 'unknown'))"
@@ -497,8 +553,9 @@ Say this, and let the user choose:
 > The quickest way to send a list to Clay is its command-line tool, and it needs two web
 > addresses that Cowork blocks by default. Two ways forward:
 >
-> **Run this in Claude Code instead** — the **Code** tab in your Claude desktop app. The tool
-> installs there in about a minute and everything works. This is the faster route today.
+> **Run this in Claude Code instead** — the **Code** tab in your Claude desktop app. On a Mac
+> or Linux machine the tool installs there in about a minute and everything works. This is the
+> faster route today.
 >
 > **Or ask your Claude administrator to allow these three addresses:**
 > `api.clay.com`, `clay-tool-runs-production.s3.us-east-1.amazonaws.com` and
@@ -526,33 +583,32 @@ carries on without it.
 
 #### Install and sign in
 
-The CLI ships in Clay's own repository, as a launcher that downloads a checksum-verified
-binary for the current platform on first use. (The `clay` and `clay-cli` packages on npm are
-unrelated projects by other authors.)
+The CLI publishes to npm as `@clay-run/cli`. (The bare `clay` and `clay-cli` packages on npm
+are unrelated projects by other authors — the scope is what makes it the right one.)
 
-**Look for an existing install before cloning anything.** In Claude Code there usually is
-one — `/setup-for-claude-code` puts it at a fixed path and signs it in. In Cowork there never
-is, and this check costs one call to find that out:
+**Look for an existing install before installing anything.** In Claude Code there usually is
+one — `/setup-for-claude-code` installs it and signs it in. In Cowork there never is, and this
+check costs one call to find that out:
 
 ```bash
-CLAY=$(command -v clay || echo ~/.clay/agent-plugins/clay/bin/clay)
-"$CLAY" whoami
+clay whoami
 ```
 
 That returns the workspace and user when the CLI is installed and signed in — go straight to
-sending the list. Where the binary is missing, install it:
+sending the list. Where `clay` is missing, install it from npm at the pinned version (Node 22
+or later required):
 
 ```bash
-mkdir -p ~/.clay && rm -rf ~/.clay/agent-plugins
-git clone -q --depth 1 https://github.com/clay-run/agent-plugins.git ~/.clay/agent-plugins
-~/.clay/agent-plugins/clay/bin/clay --version
+npm install -g @clay-run/cli@1.9.1
+clay --version
 ```
 
-A signed-in CLI returns the workspace and user. Otherwise sign in with the device flow, which
-works without a local browser. It waits for approval, so run it in the background:
+A signed-in CLI returns the workspace and user, and a session survives a CLI upgrade.
+Otherwise sign in with the device flow, which works without a local browser. It waits for
+approval, so run it in the background:
 
 ```bash
-~/.clay/agent-plugins/clay/bin/clay login --device > /tmp/clay_login.log 2>&1 &
+clay login --device > /tmp/clay_login.log 2>&1 &
 sleep 5; cat /tmp/clay_login.log
 ```
 

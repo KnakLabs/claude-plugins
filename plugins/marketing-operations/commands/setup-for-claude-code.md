@@ -1,6 +1,6 @@
 ---
 description: If you intend to use the plugin skills within Claude Code then run this command in the Code tab to install the Python dependencies. If you will be running the skills from Cowork then you can skip this command
-allowed-tools: ["Bash", "Read", "AskUserQuestion"]
+allowed-tools: ["Bash(python3 ${CLAUDE_PLUGIN_ROOT}/scripts/check_dependencies.py *)", "Read", "AskUserQuestion"]
 ---
 
 # Set up Marketing Operations on this machine
@@ -31,7 +31,7 @@ Python older than 3.10, because the pinned packages need it.
   current Python and puts it ahead of the system one:
 
   > Your Mac needs a current Python. Download the macOS installer from python.org and run it —
-  > a few minutes, and it doesn't need your password.
+  > a few minutes, and it doesn't need admin rights.
 
   `xcode-select --install` also produces a `python3`, but Apple's is 3.9.6, and three of this
   plugin's packages need 3.10 or later. Send people to python.org instead.
@@ -81,7 +81,7 @@ Continue to Step 2 — installs here land on the user's own machine and persist.
 python3 ${CLAUDE_PLUGIN_ROOT}/scripts/check_dependencies.py --install-missing
 ```
 
-Everything installs at the user level — nothing needs a password or touches system-wide
+Everything installs at the user level — nothing needs admin rights or touches system-wide
 files. That includes `gifsicle`, which installs as a plain Python package instead of
 requiring a separate install through Homebrew.
 

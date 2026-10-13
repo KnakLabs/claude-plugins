@@ -84,7 +84,7 @@ Python older than 3.10, because the pinned packages need it.
   a current Python and puts it ahead of the system one:
 
   > Your Mac needs a current Python. Download the macOS installer from python.org and run it —
-  > a few minutes, and it doesn't need your password.
+  > a few minutes, and it doesn't need admin rights.
 
   `xcode-select --install` also produces a `python3`, but Apple's is 3.9.6, and three of this
   plugin's packages need 3.10 or later. Send people to python.org instead.
